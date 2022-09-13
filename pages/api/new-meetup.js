@@ -1,19 +1,11 @@
-import { MongoClient } from "mongodb";
+import { useMongoClient } from "../../hooks/useMongoClient";
 
 const handler = async (req, res) => {
   if (req.method === "POST") {
     const data = req.body;
+    const { meetUpCollection, client } = await useMongoClient();
 
-    const client = await MongoClient.connect(
-      "mongodb+srv://hutamatr:xlpf0H34f0cNiiYM@cluster0.y5p8p1o.mongodb.net/meetups?retryWrites=true&w=majority"
-    );
-
-    const db = client.db();
-    const meetUpCollection = db.collection("meetups");
-
-    const result = await meetUpCollection.insertOne(data);
-
-    console.log(result);
+    await meetUpCollection.insertOne(data);
 
     client.close();
 

@@ -1,56 +1,62 @@
 import React from "react";
-import { useRouter } from "next/router";
+import Head from "next/head";
+import { ObjectId } from "mongodb";
 
 import MeetupDetail from "../../components/meetups/MeetupDetail";
-
-import { meetupData } from "../../utils/dummy-meetup";
+import { useMongoClient } from "../../hooks/useMongoClient";
 
 const MeetupDetailPage = ({ meetupDetail }) => {
-  // const { query } = useRouter();
-
-  // const newMeetupData = meetupData.filter((meetup) => {
-  //   return meetup.id === query.meetupId;
-  // });
-
-  console.log(meetupDetail);
-
-  return <MeetupDetail {...meetupDetail} />;
+  return (
+    <>
+      <Head>
+        <title>{meetupDetail.title}</title>
+        <meta name="description" content={meetupDetail.description} />
+      </Head>
+      <MeetupDetail {...meetupDetail} />
+    </>
+  );
 };
 
-export const getStaticPaths = () => {
+export const getStaticPaths = async () => {
+  const { meetUpCollection, client } = await useMongoClient();
+
+  const getMeetupId = await meetUpCollection.find({}, { _id: 1 }).toArray();
+
+  client.close();
+
   return {
     fallback: false,
-    paths: [
-      {
-        // this only for learning, in real project, this params dynamically generate from fetch API
+    paths: getMeetupId.map((meetId) => {
+      return {
         params: {
-          meetupId: "m-1",
+          meetupId: meetId._id.toString(),
         },
-      },
-      {
-        // this only for learning, in real project, this params dynamically generate from fetch API
-        params: {
-          meetupId: "m-2",
-        },
-      },
-    ],
+      };
+    }),
   };
 };
 
 export const getStaticProps = async (context) => {
   const { meetupId } = context.params;
-  console.log(
-    "🚀 ~ file: index.jsx ~ line 35 ~ getStaticProps ~ meetupId",
-    meetupId
-  );
-  // this only for learning, in real project, this return value dynamically generate from fetch API
+
+  const { meetUpCollection, client } = await useMongoClient();
+
+  const selectedMeetup = await meetUpCollection.findOne({
+    _id: ObjectId(meetupId),
+  });
+
+  client.close();
+
+  const { _id, image, title, address, description } = selectedMeetup;
+
   return {
     props: {
       meetupDetail: {
-        id: meetupId,
-        image: "https://picsum.photos/1280/720",
-        title: `meetup data title-${meetupId}`,
-        address: `address-${meetupId}`,
+        id: _id.toString(),
+        image,
+        title,
+        address,
+        description,
       },
     },
   };

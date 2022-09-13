@@ -5,7 +5,7 @@ import Card from "../ui/Card";
 import classes from "./NewMeetupForm.module.css";
 
 function NewMeetupForm(props) {
-  const { push } = useRouter();
+
   const titleInputRef = useRef();
   const imageInputRef = useRef();
   const addressInputRef = useRef();
@@ -27,7 +27,6 @@ function NewMeetupForm(props) {
     };
 
     props.onAddMeetup(meetupData);
-    push("/");
   }
 
   return (
