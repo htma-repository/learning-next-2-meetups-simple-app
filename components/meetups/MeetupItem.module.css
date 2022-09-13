@@ -1,5 +1,6 @@
 .item {
   margin: 1rem 0;
+  list-style: none;
 }
 
 .image {
@@ -13,6 +14,7 @@
 .image img {
   width: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .content {

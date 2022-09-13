@@ -1,0 +1,16 @@
+.detail img {
+  width: 100%;
+}
+
+.detail {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail h3 {
+  font-size: 1.5rem;
+}
